@@ -175,14 +175,11 @@ class HuggingfaceLLM:
             if self.decoding:
                 with torch.no_grad():
                     for _ in range(max_length):
-                        output_sequence = []
-
                         outputs = self.model.generate(
                             inputs, max_length=len(inputs) + 1, do_sample=True
                         )
                         output_tokens = outputs[0][-1]
-                        output_sequence.append(output_tokens.item())
-
+                        output_sequence = [output_tokens.item()]
                         # print token in real-time
                         print(
                             self.tokenizer.decode(
@@ -237,14 +234,11 @@ class HuggingfaceLLM:
             if self.decoding:
                 with torch.no_grad():
                     for _ in range(max_length):
-                        output_sequence = []
-
                         outputs = self.model.generate(
                             inputs, max_length=len(inputs) + 1, do_sample=True
                         )
                         output_tokens = outputs[0][-1]
-                        output_sequence.append(output_tokens.item())
-
+                        output_sequence = [output_tokens.item()]
                         # print token in real-time
                         print(
                             self.tokenizer.decode(
@@ -282,13 +276,12 @@ class HuggingfaceLLM:
 
     def memory_consumption(self) -> dict:
         """Get the memory consumption of the GPU"""
-        if self.gpu_available():
-            torch.cuda.synchronize()
-            allocated = torch.cuda.memory_allocated()
-            reserved = torch.cuda.memory_reserved()
-            return {"allocated": allocated, "reserved": reserved}
-        else:
+        if not self.gpu_available():
             return {"error": "GPU not available"}
+        torch.cuda.synchronize()
+        allocated = torch.cuda.memory_allocated()
+        reserved = torch.cuda.memory_reserved()
+        return {"allocated": allocated, "reserved": reserved}
 
     def print_dashboard(self, task: str):
         """Print dashboard"""

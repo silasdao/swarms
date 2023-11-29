@@ -59,9 +59,7 @@ class GodMode:
     def print_responses(self, task):
         """Prints the responses in a tabular format"""
         responses = self.run_all(task)
-        table = []
-        for i, response in enumerate(responses):
-            table.append([f"LLM {i+1}", response])
+        table = [[f"LLM {i+1}", response] for i, response in enumerate(responses)]
         print(
             colored(
                 tabulate(table, headers=["LLM", "Response"], tablefmt="pretty"), "cyan"
@@ -70,17 +68,12 @@ class GodMode:
 
     def run_all(self, task):
         """Run the task on all LLMs"""
-        responses = []
-        for llm in self.llms:
-            responses.append(llm(task))
-        return responses
+        return [llm(task) for llm in self.llms]
 
     def print_arun_all(self, task):
         """Prints the responses in a tabular format"""
         responses = self.arun_all(task)
-        table = []
-        for i, response in enumerate(responses):
-            table.append([f"LLM {i+1}", response])
+        table = [[f"LLM {i+1}", response] for i, response in enumerate(responses)]
         print(
             colored(
                 tabulate(table, headers=["LLM", "Response"], tablefmt="pretty"), "cyan"

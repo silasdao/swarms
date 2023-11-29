@@ -95,10 +95,4 @@ class Zephyr:
             top_p=self.top_p,
         )
 
-        # Extract the generated text
-        generated_text = outputs[0]["generated_text"]
-
-        # Optionally, you could also add the chatbot's response to the messages list
-        # However, the below line should be adjusted to extract the chatbot's response only
-        # self.messages.append({"role": "bot", "content": generated_text})
-        return generated_text
+        return outputs[0]["generated_text"]

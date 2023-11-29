@@ -62,10 +62,9 @@ class OceanDB:
         """
         try:
             embedding_function = MultiModalEmbeddingFunction(modality=modality)
-            collection = self.client.create_collection(
+            return self.client.create_collection(
                 collection_name, embedding_function=embedding_function
             )
-            return collection
         except Exception as e:
             logging.error(f"Failed to create collection. Error {e}")
             raise
@@ -137,8 +136,7 @@ class OceanDB:
                 the results of the query
         """
         try:
-            results = collection.query(query_texts=query_texts, n_results=n_results)
-            return results
+            return collection.query(query_texts=query_texts, n_results=n_results)
         except Exception as e:
             logging.error(f"Failed to query the collection. Error {e}")
             raise

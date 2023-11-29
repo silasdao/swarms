@@ -80,9 +80,7 @@ class Kosmos2(BaseModel):
         # For the purpose of this example, assume a mock function 'extract_entities' exists:
         entities = self.extract_entities(generated_text)
 
-        # Convert entities to detections format
-        detections = self.process_entities_to_detections(entities, image)
-        return detections
+        return self.process_entities_to_detections(entities, image)
 
     def extract_entities(
         self, text: str

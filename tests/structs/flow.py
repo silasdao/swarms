@@ -265,14 +265,13 @@ def flow_instance():
     llm = OpenAIChat(
         openai_api_key=openai_api_key,
     )
-    flow = Flow(
+    return Flow(
         llm=llm,
         max_loops=5,
         interactive=False,
         dashboard=False,
         dynamic_temperature=False,
     )
-    return flow
 
 
 def test_flow_run(flow_instance):

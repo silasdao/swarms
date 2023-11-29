@@ -18,13 +18,7 @@ bid_parser = BidOutputParser(
 
 
 def select_next_speaker(step: int, agents, director) -> int:
-    # if the step if even => director
-    # => director selects next speaker
-    if step % 2 == 1:
-        idx = 0
-    else:
-        idx = director.select_next_speaker() + 1
-    return idx
+    return 0 if step % 2 == 1 else director.select_next_speaker() + 1
 
 
 # main
@@ -83,18 +77,15 @@ class MultiAgentCollaboration:
             bids.append(bid)
         max_value = max(bids)
         max_indices = [i for i, x in enumerate(bids) if x == max_value]
-        idx = random.choice(max_indices)
-        return idx
+        return random.choice(max_indices)
 
     def run(self, max_iters: int = 10):
-        n = 0
         self.reset()
         self.inject("Debate Moderator")
         print("(Debate Moderator): ")
         print("\n")
 
-        while n < max_iters:
+        for _ in range(max_iters):
             name, message = self.step()
             print(f"({name}): {message}")
             print("\n")
-            n += 1

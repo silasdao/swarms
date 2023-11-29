@@ -205,10 +205,9 @@ class JinaEmbeddings:
 
     def memory_consumption(self) -> dict:
         """Get the memory consumption of the GPU"""
-        if self.gpu_available():
-            torch.cuda.synchronize()
-            allocated = torch.cuda.memory_allocated()
-            reserved = torch.cuda.memory_reserved()
-            return {"allocated": allocated, "reserved": reserved}
-        else:
+        if not self.gpu_available():
             return {"error": "GPU not available"}
+        torch.cuda.synchronize()
+        allocated = torch.cuda.memory_allocated()
+        reserved = torch.cuda.memory_reserved()
+        return {"allocated": allocated, "reserved": reserved}

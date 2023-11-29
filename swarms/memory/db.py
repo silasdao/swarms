@@ -121,26 +121,26 @@ class InMemoryTaskDB(TaskDB):
         return step
 
     async def get_task(self, task_id: str) -> Task:
-        task = self._tasks.get(task_id, None)
-        if not task:
+        if task := self._tasks.get(task_id, None):
+            return task
+        else:
             raise NotFoundException("Task", task_id)
-        return task
 
     async def get_step(self, task_id: str, step_id: str) -> Step:
         task = await self.get_task(task_id)
-        step = next(filter(lambda s: s.task_id == task_id, task.steps), None)
-        if not step:
+        if step := next(filter(lambda s: s.task_id == task_id, task.steps), None):
+            return step
+        else:
             raise NotFoundException("Step", step_id)
-        return step
 
     async def get_artifact(self, task_id: str, artifact_id: str) -> Artifact:
         task = await self.get_task(task_id)
-        artifact = next(
+        if artifact := next(
             filter(lambda a: a.artifact_id == artifact_id, task.artifacts), None
-        )
-        if not artifact:
+        ):
+            return artifact
+        else:
             raise NotFoundException("Artifact", artifact_id)
-        return artifact
 
     async def create_artifact(
         self,
@@ -163,7 +163,7 @@ class InMemoryTaskDB(TaskDB):
         return artifact
 
     async def list_tasks(self) -> List[Task]:
-        return [task for task in self._tasks.values()]
+        return list(self._tasks.values())
 
     async def list_steps(
         self, task_id: str, status: Optional[Status] = None

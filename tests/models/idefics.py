@@ -29,9 +29,7 @@ def test_init_default(idefics_instance):
     ],
 )
 def test_init_device(device, expected):
-    with patch(
-        "torch.cuda.is_available", return_value=True if expected == "cuda" else False
-    ):
+    with patch("torch.cuda.is_available", return_value=expected == "cuda"):
         instance = Idefics(device=device)
     assert instance.device == expected
 

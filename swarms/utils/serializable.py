@@ -100,10 +100,10 @@ class Serializable(BaseModel, ABC):
 
         # include all secrets, even if not specified in kwargs
         # as these secrets may be passed as an environment variable instead
-        for key in secrets.keys():
+        for key in secrets:
             secret_value = getattr(self, key, None) or lc_kwargs.get(key)
             if secret_value is not None:
-                lc_kwargs.update({key: secret_value})
+                lc_kwargs[key] = secret_value
 
         return {
             "lc": 1,

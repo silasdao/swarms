@@ -17,9 +17,7 @@ class ToolsRegistry:
         ret = self.tools[tool_name]()(config)
         if isinstance(ret, tool):
             return ret
-        raise ValueError(
-            "Tool builder {} did not return a Tool instance".format(tool_name)
-        )
+        raise ValueError(f"Tool builder {tool_name} did not return a Tool instance")
 
     def list_tools(self) -> List[str]:
         return list(self.tools.keys())

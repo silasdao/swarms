@@ -126,7 +126,6 @@ def open_plugin_and_login(driver: AutotabChromeDriver):
         driver.add_cookie(cookie)
 
         driver.get("https://www.google.com")
-        open_plugin(driver)
     else:
         print("No autotab API key found, heading to autotab.com to sign up")
 
@@ -138,7 +137,8 @@ def open_plugin_and_login(driver: AutotabChromeDriver):
         driver.get(url)
         time.sleep(0.5)
 
-        open_plugin(driver)
+
+    open_plugin(driver)
 
 
 def get_driver(

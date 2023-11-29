@@ -118,10 +118,7 @@ class Idefics:
             bad_words_ids=bad_words_ids,
             max_length=self.max_length,
         )
-        generated_text = self.processor.batch_decode(
-            generated_ids, skip_special_tokens=True
-        )
-        return generated_text
+        return self.processor.batch_decode(generated_ids, skip_special_tokens=True)
 
     def __call__(self, prompts, batched_mode=True):
         """
@@ -163,10 +160,7 @@ class Idefics:
             bad_words_ids=bad_words_ids,
             max_length=self.max_length,
         )
-        generated_text = self.processor.batch_decode(
-            generated_ids, skip_special_tokens=True
-        )
-        return generated_text
+        return self.processor.batch_decode(generated_ids, skip_special_tokens=True)
 
     def chat(self, user_input):
         """

@@ -143,8 +143,8 @@ class Orchestrator:
 
                 self.collection.add(
                     embeddings=[vector_representation],
-                    documents=[str(id(task))],
-                    ids=[str(id(task))],
+                    documents=[id(task)],
+                    ids=[id(task)],
                 )
 
                 logging.info(
@@ -165,8 +165,7 @@ class Orchestrator:
         openai = embedding_functions.OpenAIEmbeddingFunction(
             api_key=api_key, model_name=model_name
         )
-        embedding = openai(input)
-        return embedding
+        return openai(input)
 
     # @abstractmethod
 
@@ -174,10 +173,7 @@ class Orchestrator:
         """Retrieve results from a specific agent"""
 
         try:
-            # Query the vector database for documents created by the agents
-            results = self.collection.query(query_texts=[str(agent_id)], n_results=10)
-
-            return results
+            return self.collection.query(query_texts=[str(agent_id)], n_results=10)
         except Exception as e:
             logging.error(
                 f"Failed to retrieve results from agent {agent_id}. Error {e}"
@@ -209,7 +205,7 @@ class Orchestrator:
         """append the result of the swarm to a specifici collection in the database"""
 
         try:
-            self.collection.add(documents=[result], ids=[str(id(result))])
+            self.collection.add(documents=[result], ids=[id(result)])
 
         except Exception as e:
             logging.error(f"Failed to append the agent output to database. Error: {e}")

@@ -55,7 +55,7 @@ def test_append_to_db(orchestrator, mock_vector_db):
     result = "test_result"
     orchestrator.append_to_db(collection, result)
     mock_vector_db.append_document.assert_called_once_with(
-        collection, result, id=str(id(result))
+        collection, result, id=id(result)
     )
 
 

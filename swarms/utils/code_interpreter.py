@@ -134,8 +134,7 @@ class SubprocessCodeInterpreter(BaseCodeInterpreter):
             else:
                 time.sleep(0.1)
             try:
-                output = self.output_queue.get(timeout=0.3)  # Waits for 0.3 seconds
-                yield output
+                yield self.output_queue.get(timeout=0.3)
             except queue.Empty:
                 if self.done.is_set():
                     # Try to yank 3 more times from it... maybe there's something in there...

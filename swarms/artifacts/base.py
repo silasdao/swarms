@@ -21,19 +21,12 @@ class BaseArtifact(ABC):
 
     @classmethod
     def value_to_bytes(cls, value: any) -> bytes:
-        if isinstance(value, bytes):
-            return value
-        else:
-            return str(value).encode()
+        return value if isinstance(value, bytes) else str(value).encode()
 
     @classmethod
     def value_to_dict(cls, value: any) -> dict:
-        if isinstance(value, dict):
-            dict_value = value
-        else:
-            dict_value = json.loads(value)
-
-        return {k: v for k, v in dict_value.items()}
+        dict_value = value if isinstance(value, dict) else json.loads(value)
+        return dict(dict_value.items())
 
     @classmethod
     def from_dict(cls, artifact_dict: dict) -> BaseArtifact:

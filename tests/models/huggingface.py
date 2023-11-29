@@ -12,8 +12,7 @@ from swarms.models.huggingface import (
 @pytest.fixture
 def llm_instance():
     model_id = "gpt2-small"
-    instance = HuggingfaceLLM(model_id=model_id)
-    return instance
+    return HuggingfaceLLM(model_id=model_id)
 
 
 # Test for instantiation and attributes

@@ -471,11 +471,10 @@ class BaseOpenAI(BaseLLM):
                     "max_tokens set to -1 not supported for multiple inputs."
                 )
             params["max_tokens"] = self.max_tokens_for_prompt(prompts[0])
-        sub_prompts = [
+        return [
             prompts[i : i + self.batch_size]
             for i in range(0, len(prompts), self.batch_size)
         ]
-        return sub_prompts
 
     def create_llm_result(
         self, choices: Any, prompts: List[str], token_usage: Dict[str, int]

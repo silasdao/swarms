@@ -599,7 +599,7 @@ class TestTool:
 
         @tool
         def return_bool(arg: str) -> bool:
-            return arg.lower() in ["true", "yes"]
+            return arg.lower() in {"true", "yes"}
 
         result = return_bool("true")
         assert isinstance(result, bool)
@@ -791,10 +791,7 @@ class TestTool:
     def test_tool_with_recursive_function(self):
         @tool
         def recursive_function(n: int) -> int:
-            if n == 0:
-                return 0
-            else:
-                return n + recursive_function(n - 1)
+            return 0 if n == 0 else n + recursive_function(n - 1)
 
         assert recursive_function(5) == 15
 

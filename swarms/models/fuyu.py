@@ -56,8 +56,7 @@ class Fuyu:
 
     def get_img(self, img: str):
         """Get the image from the path"""
-        image_pil = Image.open(img)
-        return image_pil
+        return Image.open(img)
 
     def __call__(self, text: str, img: str):
         """Call the model with text and img paths"""
@@ -71,15 +70,14 @@ class Fuyu:
 
         output = self.model.generate(**model_inputs, max_new_tokens=self.max_new_tokens)
         text = self.processor.batch_decode(output[:, -7:], skip_special_tokens=True)
-        return print(str(text))
+        return print(text)
 
     def get_img_from_web(self, img_url: str):
         """Get the image from the web"""
         try:
             response = requests.get(img_url)
             response.raise_for_status()
-            image_pil = Image.open(BytesIO(response.content))
-            return image_pil
+            return Image.open(BytesIO(response.content))
         except requests.RequestException as error:
             print(f"Error fetching image from {img_url} and error: {error}")
             return None

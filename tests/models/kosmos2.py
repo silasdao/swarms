@@ -7,8 +7,7 @@ from swarms.models.kosmos2 import Kosmos2, Detections
 # Fixture for a sample image
 @pytest.fixture
 def sample_image():
-    image = Image.new("RGB", (224, 224))
-    return image
+    return Image.new("RGB", (224, 224))
 
 
 # Fixture for initializing Kosmos2

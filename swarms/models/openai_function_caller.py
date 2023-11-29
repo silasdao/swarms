@@ -90,7 +90,7 @@ class FunctionSpecification(BaseModel):
         Raises:
             ValueError: If any required parameter is missing or if any parameter is invalid.
         """
-        for key, value in params.items():
+        for key in params:
             if key in self.parameters:
                 self.parameters[key]
                 # Perform specific validation based on param_spec
@@ -156,20 +156,19 @@ class OpenAIFunctionCaller:
     ):
         headers = {
             "Content-Type": "application/json",
-            "Authorization": "Bearer " + openai.api_key,
+            "Authorization": f"Bearer {openai.api_key}",
         }
         json_data = {"model": self.model, "messages": messages}
         if tools is not None:
-            json_data.update({"tools": tools})
+            json_data["tools"] = tools
         if tool_choice is not None:
-            json_data.update({"tool_choice": tool_choice})
+            json_data["tool_choice"] = tool_choice
         try:
-            response = requests.post(
+            return requests.post(
                 "https://api.openai.com/v1/chat/completions",
                 headers=headers,
                 json=json_data,
             )
-            return response
         except Exception as e:
             print("Unable to generate ChatCompletion response")
             print(f"Exception: {e}")
@@ -220,7 +219,7 @@ class OpenAIFunctionCaller:
                 )
 
     def call(self, prompt: str) -> Dict:
-        response = openai.Completion.create(
+        return openai.Completion.create(
             engine=self.model,
             prompt=prompt,
             max_tokens=self.max_tokens,
@@ -239,7 +238,6 @@ class OpenAIFunctionCaller:
             messages=self.messages,
             timeout_sec=self.timeout_sec,
         )
-        return response
 
     def run(self, prompt: str) -> str:
         response = self.call(prompt)

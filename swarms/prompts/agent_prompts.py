@@ -127,14 +127,7 @@ def generate_lesson_prompt(concept):
         str: The lesson prompt for the given concept.
     """
 
-    prompt = (
-        f"generate a comprehensive lesson about {concept} in Markdown syntax. This"
-        f" should include the definitionof {concept}, its historical background and"
-        " development, its applications or uses in differentfields, and notable events"
-        f" or facts related to {concept}."
-    )
-
-    return prompt
+    return f"generate a comprehensive lesson about {concept} in Markdown syntax. This should include the definitionof {concept}, its historical background and development, its applications or uses in differentfields, and notable events or facts related to {concept}."
 
 
 def get_report_by_type(report_type):

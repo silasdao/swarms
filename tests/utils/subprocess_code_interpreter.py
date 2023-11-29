@@ -165,7 +165,7 @@ def test_subprocess_code_interpreter_run_empty_output_queue(
 ):
     code = 'print("Hello, World!")'
     result = list(subprocess_code_interpreter.run(code))
-    assert not any("active_line" in output for output in result)
+    assert all("active_line" not in output for output in result)
 
 
 def test_subprocess_code_interpreter_handle_stream_output_stdout(

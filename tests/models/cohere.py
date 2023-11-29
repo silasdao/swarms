@@ -50,8 +50,6 @@ def test_cohere_stream_api_error_handling(cohere_instance):
     cohere_instance.cohere_api_key = "invalid-api-key"
     with pytest.raises(Exception):
         generator = cohere_instance.stream("Error handling with invalid API key.")
-        for token in generator:
-            pass
 
 
 def test_cohere_streaming_mode(cohere_instance):

@@ -15,14 +15,12 @@ DALLE_COOKIE = dalle_cookie
 
 @pytest.fixture(scope="module")
 def idea2image_instance():
-    # Create an instance of the Idea2Image class
-    idea2image = Idea2Image(
+    yield Idea2Image(
         image=TEST_PROMPT,
         openai_api_key=OPENAI_API_KEY,
         cookie=DALLE_COOKIE,
         output_folder=TEST_OUTPUT_FOLDER,
     )
-    yield idea2image
     # Clean up the test output folder after testing
     if os.path.exists(TEST_OUTPUT_FOLDER):
         shutil.rmtree(TEST_OUTPUT_FOLDER)

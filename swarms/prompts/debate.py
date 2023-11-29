@@ -1,12 +1,10 @@
 def presidential_debate(character_names, topic):
-    game_description = f"""Here is the topic for the presidential debate: {topic}.
+    return f"""Here is the topic for the presidential debate: {topic}.
     The presidential candidates are: {', '.join(character_names)}."""
-
-    return game_description
 
 
 def character(character_name, topic, word_limit):
-    prompt = f"""
+    return f"""
     You will speak in the style of {character_name}, and exaggerate their personality.
     You will come up with creative ideas related to {topic}.
     Do not say the same things over and over again.
@@ -19,7 +17,6 @@ def character(character_name, topic, word_limit):
     Never forget to keep your response to {word_limit} words!
     Do not add anything else.
     """
-    return prompt
 
 
 def debate_monitor(game_description, word_limit, character_names):

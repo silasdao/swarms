@@ -98,10 +98,9 @@ class SpeechT5:
             self.embeddings_dataset[speaker_id]["xvector"]
         ).unsqueeze(0)
         inputs = self.processor(text=text, return_tensors="pt")
-        speech = self.model.generate_speech(
+        return self.model.generate_speech(
             inputs["input_ids"], speaker_embedding, vocoder=self.vocoder
         )
-        return speech
 
     def save_speech(self, speech, filename="speech.wav"):
         """Save Speech to a file."""
@@ -138,8 +137,7 @@ class SpeechT5:
     def quick_synthesize(self, text):
         """Customize pipeline method for quick synthesis."""
         synthesiser = pipeline("text-to-speech", self.model_name)
-        speech = synthesiser(text)
-        return speech
+        return synthesiser(text)
 
     # Feature 4: Change dataset split (train, validation, test)
     def change_dataset_split(self, split="train"):

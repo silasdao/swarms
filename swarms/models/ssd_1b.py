@@ -80,8 +80,7 @@ class SSD1B:
 
     def read_img(self, img: str):
         """Read the image using pil"""
-        img = Image.open(img)
-        return img
+        return Image.open(img)
 
     def set_width_height(self, img: str, width: int, height: int):
         """Set the width and height of the image"""
@@ -93,8 +92,7 @@ class SSD1B:
         """Convert the image to an bytes io object"""
         byte_stream = BytesIO()
         img.save(byte_stream, format=format)
-        byte_array = byte_stream.getvalue()
-        return byte_array
+        return byte_stream.getvalue()
 
     @backoff.on_exception(backoff.expo, Exception, max_time=max_time_seconds)
     def __call__(self, task: str, neg_prompt: str):

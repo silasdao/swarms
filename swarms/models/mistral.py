@@ -78,8 +78,7 @@ class Mistral:
                 temperature=self.temperature,
                 max_new_tokens=self.max_length,
             )
-            output_text = self.tokenizer.batch_decode(generated_ids)[0]
-            return output_text
+            return self.tokenizer.batch_decode(generated_ids)[0]
         except Exception as e:
             raise ValueError(f"Error running the model: {str(e)}")
 
@@ -95,8 +94,7 @@ class Mistral:
                 temperature=self.temperature,
                 max_new_tokens=self.max_length,
             )
-            output_text = self.tokenizer.batch_decode(generated_ids)[0]
-            return output_text
+            return self.tokenizer.batch_decode(generated_ids)[0]
         except Exception as e:
             raise ValueError(f"Error running the model: {str(e)}")
 
@@ -153,5 +151,4 @@ class Mistral:
             print(token)
 
         """
-        for token in response.split():
-            yield token
+        yield from response.split()

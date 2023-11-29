@@ -187,10 +187,7 @@ class Chroma(VectorStore):
         if self._embedding_function is not None:
             embeddings = self._embedding_function.embed_documents(texts)
         if metadatas:
-            # fill metadatas with empty dicts if somebody
-            # did not specify metadata for all texts
-            length_diff = len(texts) - len(metadatas)
-            if length_diff:
+            if length_diff := len(texts) - len(metadatas):
                 metadatas = metadatas + [{}] * length_diff
             empty_ids = []
             non_empty_ids = []
@@ -214,14 +211,13 @@ class Chroma(VectorStore):
                         ids=ids_with_metadata,
                     )
                 except ValueError as e:
-                    if "Expected metadata value to be" in str(e):
-                        msg = (
-                            "Try filtering complex metadata from the document using "
-                            "langchain.vectorstores.utils.filter_complex_metadata."
-                        )
-                        raise ValueError(e.args[0] + "\n\n" + msg)
-                    else:
+                    if "Expected metadata value to be" not in str(e):
                         raise e
+                    msg = (
+                        "Try filtering complex metadata from the document using "
+                        "langchain.vectorstores.utils.filter_complex_metadata."
+                    )
+                    raise ValueError(e.args[0] + "\n\n" + msg)
             if empty_ids:
                 texts_without_metadatas = [texts[j] for j in empty_ids]
                 embeddings_without_metadatas = (
@@ -428,8 +424,7 @@ class Chroma(VectorStore):
 
         candidates = _results_to_docs(results)
 
-        selected_results = [r for i, r in enumerate(candidates) if i in mmr_selected]
-        return selected_results
+        return [r for i, r in enumerate(candidates) if i in mmr_selected]
 
     def max_marginal_relevance_search(
         self,
@@ -464,7 +459,7 @@ class Chroma(VectorStore):
             )
 
         embedding = self._embedding_function.embed_query(query)
-        docs = self.max_marginal_relevance_search_by_vector(
+        return self.max_marginal_relevance_search_by_vector(
             embedding,
             k,
             fetch_k,
@@ -472,7 +467,6 @@ class Chroma(VectorStore):
             filter=filter,
             where_document=where_document,
         )
-        return docs
 
     def delete_collection(self) -> None:
         """Delete the collection."""

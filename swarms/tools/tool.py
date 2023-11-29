@@ -109,7 +109,7 @@ class BaseTool(RunnableSerializable[Union[str, Dict], Any]):
         args_schema_type = cls.__annotations__.get("args_schema", None)
 
         if args_schema_type is not None:
-            if args_schema_type is None or args_schema_type == BaseModel:
+            if args_schema_type == BaseModel:
                 # Throw errors for common mis-annotations.
                 # TODO: Use get_args / get_origin and fully
                 # specify valid annotations.
@@ -182,9 +182,8 @@ class ChildTool(BaseTool):
     def args(self) -> dict:
         if self.args_schema is not None:
             return self.args_schema.schema()["properties"]
-        else:
-            schema = create_schema_from_function(self.name, self._run)
-            return schema.schema()["properties"]
+        schema = create_schema_from_function(self.name, self._run)
+        return schema.schema()["properties"]
 
     # --- Runnable ---
 
@@ -309,10 +308,7 @@ class ChildTool(BaseTool):
     ) -> Any:
         """Run the tool."""
         parsed_input = self._parse_input(tool_input)
-        if not self.verbose and verbose is not None:
-            verbose_ = verbose
-        else:
-            verbose_ = self.verbose
+        verbose_ = self.verbose if self.verbose or verbose is None else verbose
         callback_manager = CallbackManager.configure(
             callbacks,
             self.callbacks,
@@ -343,10 +339,7 @@ class ChildTool(BaseTool):
                 run_manager.on_tool_error(e)
                 raise e
             elif isinstance(self.handle_tool_error, bool):
-                if e.args:
-                    observation = e.args[0]
-                else:
-                    observation = "Tool execution error"
+                observation = e.args[0] if e.args else "Tool execution error"
             elif isinstance(self.handle_tool_error, str):
                 observation = self.handle_tool_error
             elif callable(self.handle_tool_error):
@@ -384,10 +377,7 @@ class ChildTool(BaseTool):
     ) -> Any:
         """Run the tool asynchronously."""
         parsed_input = self._parse_input(tool_input)
-        if not self.verbose and verbose is not None:
-            verbose_ = verbose
-        else:
-            verbose_ = self.verbose
+        verbose_ = self.verbose if self.verbose or verbose is None else verbose
         callback_manager = AsyncCallbackManager.configure(
             callbacks,
             self.callbacks,
@@ -418,10 +408,7 @@ class ChildTool(BaseTool):
                 await run_manager.on_tool_error(e)
                 raise e
             elif isinstance(self.handle_tool_error, bool):
-                if e.args:
-                    observation = e.args[0]
-                else:
-                    observation = "Tool execution error"
+                observation = e.args[0] if e.args else "Tool execution error"
             elif isinstance(self.handle_tool_error, str):
                 observation = self.handle_tool_error
             elif callable(self.handle_tool_error):
@@ -522,23 +509,22 @@ class Tool(BaseTool):
         **kwargs: Any,
     ) -> Any:
         """Use the tool asynchronously."""
-        if self.coroutine:
-            new_argument_supported = signature(self.coroutine).parameters.get(
-                "callbacks"
-            )
-            return (
-                await self.coroutine(
-                    *args,
-                    callbacks=run_manager.get_child() if run_manager else None,
-                    **kwargs,
-                )
-                if new_argument_supported
-                else await self.coroutine(*args, **kwargs)
-            )
-        else:
+        if not self.coroutine:
             return await asyncio.get_running_loop().run_in_executor(
                 None, partial(self._run, run_manager=run_manager, **kwargs), *args
             )
+        new_argument_supported = signature(self.coroutine).parameters.get(
+            "callbacks"
+        )
+        return (
+            await self.coroutine(
+                *args,
+                callbacks=run_manager.get_child() if run_manager else None,
+                **kwargs,
+            )
+            if new_argument_supported
+            else await self.coroutine(*args, **kwargs)
+        )
 
     # TODO: this is for backwards compatibility, remove in future
     def __init__(
@@ -831,7 +817,7 @@ def tool(
         # if the argument is a function, then we use the function name as the tool name
         # Example usage: @tool
         return _make_with_name(args[0].__name__)(args[0])
-    elif len(args) == 0:
+    elif not args:
         # if there are no arguments, then we use the function name as the tool name
         # Example usage: @tool(return_direct=True)
         def _partial(func: Callable[[str], str]) -> BaseTool:

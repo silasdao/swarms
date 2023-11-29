@@ -42,23 +42,20 @@ class OpenAIAssistant:
     instructions: str = None
 
     def create_assistant(self, task: str):
-        assistant = self.client.create_assistant(
+        return self.client.create_assistant(
             name=self.name,
             instructions=self.instructions,
             tools=self.tools,
             model=self.model,
         )
-        return assistant
 
     def create_thread(self):
-        thread = self.client.beta.threads.create()
-        return thread
+        return self.client.beta.threads.create()
 
     def add_message_to_thread(self, thread_id: str, message: str):
-        message = self.client.beta.threads.add_message(
+        return self.client.beta.threads.add_message(
             thread_id=thread_id, role=self.user, content=message
         )
-        return message
 
     def run(self, task: str):
         run = self.client.beta.threads.runs.create(
@@ -67,8 +64,6 @@ class OpenAIAssistant:
             instructions=self.instructions,
         )
 
-        out = self.client.beta.threads.runs.retrieve(
+        return self.client.beta.threads.runs.retrieve(
             thread_id=run.thread_id, run_id=run.id
         )
-
-        return out

@@ -94,10 +94,7 @@ class NonLinearWorkflow:
 
     def to_graph(self) -> Dict[str, set[str]]:
         """Convert the workflow to a graph"""
-        graph = {
-            task.id: set(child.id for child in task.children) for task in self.tasks
-        }
-        return graph
+        return {task.id: {child.id for child in task.children} for task in self.tasks}
 
     def order_tasks(self) -> List[Task]:
         """Order the tasks USING TOPOLOGICAL SORTING"""

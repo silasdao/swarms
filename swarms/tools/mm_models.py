@@ -26,7 +26,7 @@ from swarms.utils.main import BaseHandler, get_new_image_name
 
 class MaskFormer:
     def __init__(self, device):
-        print("Initializing MaskFormer to %s" % device)
+        print(f"Initializing MaskFormer to {device}")
         self.device = device
         self.processor = CLIPSegProcessor.from_pretrained("CIDAS/clipseg-rd64-refined")
         self.model = CLIPSegForImageSegmentation.from_pretrained(
@@ -62,7 +62,7 @@ class MaskFormer:
 
 class ImageEditing:
     def __init__(self, device):
-        print("Initializing ImageEditing to %s" % device)
+        print(f"Initializing ImageEditing to {device}")
         self.device = device
         self.mask_former = MaskFormer(device=self.device)
         self.revision = "fp16" if "cuda" in device else None
@@ -122,7 +122,7 @@ class ImageEditing:
 
 class InstructPix2Pix:
     def __init__(self, device):
-        print("Initializing InstructPix2Pix to %s" % device)
+        print(f"Initializing InstructPix2Pix to {device}")
         self.device = device
         self.torch_dtype = torch.float16 if "cuda" in device else torch.float32
         self.pipe = StableDiffusionInstructPix2PixPipeline.from_pretrained(
@@ -164,7 +164,7 @@ class InstructPix2Pix:
 
 class Text2Image:
     def __init__(self, device):
-        print("Initializing Text2Image to %s" % device)
+        print(f"Initializing Text2Image to {device}")
         self.device = device
         self.torch_dtype = torch.float16 if "cuda" in device else torch.float32
         self.pipe = StableDiffusionPipeline.from_pretrained(
@@ -187,8 +187,8 @@ class Text2Image:
         ),
     )
     def inference(self, text):
-        image_filename = os.path.join("image", str(uuid.uuid4())[0:8] + ".png")
-        prompt = text + ", " + self.a_prompt
+        image_filename = os.path.join("image", f"{str(uuid.uuid4())[:8]}.png")
+        prompt = f"{text}, {self.a_prompt}"
         image = self.pipe(prompt, negative_prompt=self.n_prompt).images[0]
         image.save(image_filename)
 
@@ -202,7 +202,7 @@ class Text2Image:
 
 class VisualQuestionAnswering:
     def __init__(self, device):
-        print("Initializing VisualQuestionAnswering to %s" % device)
+        print(f"Initializing VisualQuestionAnswering to {device}")
         self.torch_dtype = torch.float16 if "cuda" in device else torch.float32
         self.device = device
         self.processor = BlipProcessor.from_pretrained("Salesforce/blip-vqa-base")
@@ -238,7 +238,7 @@ class VisualQuestionAnswering:
 
 class ImageCaptioning(BaseHandler):
     def __init__(self, device):
-        print("Initializing ImageCaptioning to %s" % device)
+        print(f"Initializing ImageCaptioning to {device}")
         self.device = device
         self.torch_dtype = torch.float16 if "cuda" in device else torch.float32
         self.processor = BlipProcessor.from_pretrained(

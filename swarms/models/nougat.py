@@ -48,8 +48,7 @@ class Nougat:
 
     def get_image(self, img_path: str):
         """Get an image from a path"""
-        image = Image.open(img_path)
-        return image
+        return Image.open(img_path)
 
     def __call__(self, img_path: str):
         """Call the model with an image_path str as an input"""
@@ -66,21 +65,20 @@ class Nougat:
         sequence = self.processor.batch_decode(outputs, skip_special_tokens=True)[0]
         sequence = self.processor.post_process_generation(sequence, fix_markdown=False)
 
-        out = print(sequence)
-        return out
+        return print(sequence)
 
-    def clean_nougat_output(raw_output):
+    def clean_nougat_output(self):
         # Define the pattern to extract the relevant data
         daily_balance_pattern = (
             r"\*\*(\d{2}/\d{2}/\d{4})\*\*\n\n\*\*([\d,]+\.\d{2})\*\*"
         )
 
         # Find all matches of the pattern
-        matches = re.findall(daily_balance_pattern, raw_output)
+        matches = re.findall(daily_balance_pattern, self)
 
         # Convert the matches to a readable format
         cleaned_data = [
-            "Date: {}, Amount: {}".format(date, amount.replace(",", ""))
+            f'Date: {date}, Amount: {amount.replace(",", "")}'
             for date, amount in matches
         ]
 

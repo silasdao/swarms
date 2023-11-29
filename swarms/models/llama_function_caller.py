@@ -170,16 +170,18 @@ class LlamaFunctionCaller:
 
         streamer = TextStreamer(self.tokenizer)
 
-        if self.streaming:
-            out = self.model.generate(
-                **inputs, streamer=streamer, max_new_tokens=self.max_tokens, **kwargs
+        return (
+            self.model.generate(
+                **inputs,
+                streamer=streamer,
+                max_new_tokens=self.max_tokens,
+                **kwargs
             )
-
-            return out
-        else:
-            out = self.model.generate(**inputs, max_length=self.max_tokens, **kwargs)
-            # return self.tokenizer.decode(out[0], skip_special_tokens=True)
-            return out
+            if self.streaming
+            else self.model.generate(
+                **inputs, max_length=self.max_tokens, **kwargs
+            )
+        )
 
 
 # llama_caller = LlamaFunctionCaller()

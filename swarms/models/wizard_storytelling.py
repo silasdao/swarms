@@ -129,14 +129,11 @@ class WizardLLMStoryTeller:
             if self.decoding:
                 with torch.no_grad():
                     for _ in range(max_length):
-                        output_sequence = []
-
                         outputs = self.model.generate(
                             inputs, max_length=len(inputs) + 1, do_sample=True
                         )
                         output_tokens = outputs[0][-1]
-                        output_sequence.append(output_tokens.item())
-
+                        output_sequence = [output_tokens.item()]
                         # print token in real-time
                         print(
                             self.tokenizer.decode(
@@ -183,14 +180,11 @@ class WizardLLMStoryTeller:
             if self.decoding:
                 with torch.no_grad():
                     for _ in range(max_length):
-                        output_sequence = []
-
                         outputs = self.model.generate(
                             inputs, max_length=len(inputs) + 1, do_sample=True
                         )
                         output_tokens = outputs[0][-1]
-                        output_sequence.append(output_tokens.item())
-
+                        output_sequence = [output_tokens.item()]
                         # print token in real-time
                         print(
                             self.tokenizer.decode(

@@ -78,15 +78,13 @@ class AutoBlogGenSwarm:
 
     def social_media_prompt(self, article: str):
         """Gets the social media prompt"""
-        prompt = SOCIAL_MEDIA_SYSTEM_PROMPT_AGENT.replace(
+        return SOCIAL_MEDIA_SYSTEM_PROMPT_AGENT.replace(
             "{{ARTICLE}}", article
         ).replace("{{GOAL}}", self.objective)
-        return prompt
 
     def get_review_prompt(self, article: str):
         """Gets the review prompt"""
-        prompt = REVIEW_PROMPT.replace("{{ARTICLE}}", article)
-        return prompt
+        return REVIEW_PROMPT.replace("{{ARTICLE}}", article)
 
     def step(self):
         """Steps through the task"""
@@ -112,7 +110,7 @@ class AutoBlogGenSwarm:
         """Runs the swarm"""
         for attempt in range(self.retry_attempts):
             try:
-                for i in range(self.iterations):
+                for _ in range(self.iterations):
                     self.step()
             except Exception as error:
                 print(colored(f"Error while running AutoBlogGenSwarm {error}", "red"))

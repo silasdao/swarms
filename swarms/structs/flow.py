@@ -16,7 +16,7 @@ This will enable you to leave the autonomous loop.
 """
 
 # Constants
-FLOW_SYSTEM_PROMPT = f"""
+FLOW_SYSTEM_PROMPT = """
 You are an autonomous agent granted autonomy in a autonomous loop structure.
 Your role is to engage in multi-step conversations with your self or the user,
 generate long-form content like blogs, screenplays, or SOPs,
@@ -192,9 +192,7 @@ class Flow:
 
     def _check_stopping_condition(self, response: str) -> bool:
         """Check if the stopping condition is met."""
-        if self.stopping_condition:
-            return self.stopping_condition(response)
-        return False
+        return self.stopping_condition(response) if self.stopping_condition else False
 
     def dynamic_temperature(self):
         """
@@ -462,10 +460,7 @@ class Flow:
             print(colored(f"Autosaving flow state to {save_path}", "green"))
             self.save_state(save_path)
 
-        if self.return_history:
-            return response, history
-
-        return response
+        return (response, history) if self.return_history else response
 
     async def arun(self, task: str, **kwargs):
         """
@@ -538,10 +533,7 @@ class Flow:
             print(colored(f"Autosaving flow state to {save_path}", "green"))
             self.save_state(save_path)
 
-        if self.return_history:
-            return response, history
-
-        return response
+        return (response, history) if self.return_history else response
 
     def _run(self, **kwargs: Any) -> str:
         """Generate a result using the provided keyword args."""
@@ -566,12 +558,11 @@ class Flow:
             str: The agent history prompt
         """
         system_prompt = system_prompt or self.system_prompt
-        agent_history_prompt = f"""
+        return f"""
             SYSTEM_PROMPT: {system_prompt}
 
             History: {history}
         """
-        return agent_history_prompt
 
     async def run_concurrent(self, tasks: List[str], **kwargs):
         """
@@ -581,8 +572,7 @@ class Flow:
             tasks (List[str]): A list of tasks to run.
         """
         task_coroutines = [self.run_async(task, **kwargs) for task in tasks]
-        completed_tasks = await asyncio.gather(*task_coroutines)
-        return completed_tasks
+        return await asyncio.gather(*task_coroutines)
 
     def bulk_run(self, inputs: List[Dict[str, Any]]) -> List[str]:
         """Generate responses for multiple input sets."""
@@ -765,7 +755,7 @@ class Flow:
         """Interactive run mode"""
         response = input("Start the cnversation")
 
-        for i in range(max_loops):
+        for _ in range(max_loops):
             ai_response = self.streamed_generation(response)
             print(f"AI: {ai_response}")
 

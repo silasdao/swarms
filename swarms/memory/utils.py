@@ -62,12 +62,11 @@ def filter_complex_metadata(
     """Filter out metadata types that are not supported for a vector store."""
     updated_documents = []
     for document in documents:
-        filtered_metadata = {}
-        for key, value in document.metadata.items():
-            if not isinstance(value, allowed_types):
-                continue
-            filtered_metadata[key] = value
-
+        filtered_metadata = {
+            key: value
+            for key, value in document.metadata.items()
+            if isinstance(value, allowed_types)
+        }
         document.metadata = filtered_metadata
         updated_documents.append(document)
 

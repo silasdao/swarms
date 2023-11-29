@@ -100,8 +100,7 @@ class Dalle3:
 
     def read_img(self, img: str):
         """Read the image using pil"""
-        img = Image.open(img)
-        return img
+        return Image.open(img)
 
     def set_width_height(self, img: str, width: int, height: int):
         """Set the width and height of the image"""
@@ -113,8 +112,7 @@ class Dalle3:
         """Convert the image to an bytes io object"""
         byte_stream = BytesIO()
         img.save(byte_stream, format=format)
-        byte_array = byte_stream.getvalue()
-        return byte_array
+        return byte_stream.getvalue()
 
     @backoff.on_exception(backoff.expo, Exception, max_time=max_time_seconds)
     def __call__(self, task: str):
@@ -194,11 +192,10 @@ class Dalle3:
         """
         full_path = os.path.join(self.save_path, filename)
         response = requests.get(img_url)
-        if response.status_code == 200:
-            with open(full_path, "wb") as file:
-                file.write(response.content)
-        else:
+        if response.status_code != 200:
             raise ValueError(f"Failed to download image from {img_url}")
+        with open(full_path, "wb") as file:
+            file.write(response.content)
 
     def create_variations(self, img: str):
         """
@@ -227,9 +224,7 @@ class Dalle3:
             response = self.client.images.create_variation(
                 img=open(img, "rb"), n=self.n, size=self.size
             )
-            img = response.data[0].url
-
-            return img
+            return response.data[0].url
         except (Exception, openai.OpenAIError) as error:
             print(
                 colored(

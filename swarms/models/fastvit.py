@@ -20,7 +20,7 @@ class ClassificationResult(BaseModel):
 
     @validator("class_id", "confidence", pre=True, each_item=True)
     def check_list_contents(cls, v):
-        assert isinstance(v, int) or isinstance(v, float), "must be integer or float"
+        assert isinstance(v, (int, float)), "must be integer or float"
         return v
 
 

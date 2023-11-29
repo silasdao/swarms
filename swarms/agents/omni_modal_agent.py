@@ -108,11 +108,9 @@ class OmniModalAgent:
         self.task_executor = TaskExecutor(plan)
         self.task_executor.run()
 
-        response = self.response_generator.generate(
+        return self.response_generator.generate(
             {"task_execution": self.task_executor}
         )
-
-        return response
 
     def chat(self, msg: str = None, streaming: bool = False):
         """
@@ -167,5 +165,4 @@ class OmniModalAgent:
             print(token)
 
         """
-        for token in response.split():
-            yield token
+        yield from response.split()

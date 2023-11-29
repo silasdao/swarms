@@ -108,7 +108,7 @@ def test_clip_end_to_end(clip_instance, sample_image_path):
 
 # Test label tokenization with long labels
 def test_clip_long_labels(clip_instance):
-    labels = ["label" + str(i) for i in range(100)]
+    labels = [f"label{str(i)}" for i in range(100)]
     tokenized_labels = clip_instance.tokenizer(labels)
     assert isinstance(tokenized_labels, torch.Tensor)
     assert tokenized_labels.shape[0] == len(labels)

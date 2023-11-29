@@ -34,15 +34,13 @@ llm = OpenAIChat(openai_api_key=api_key)
 
 
 def get_review_prompt(article):
-    prompt = REVIEW_PROMPT.replace("{{ARTICLE}}", article)
-    return prompt
+    return REVIEW_PROMPT.replace("{{ARTICLE}}", article)
 
 
 def social_media_prompt(article: str, goal: str = "Clicks and engagement"):
-    prompt = SOCIAL_MEDIA_SYSTEM_PROMPT_AGENT.replace("{{ARTICLE}}", article).replace(
-        "{{GOAL}}", goal
-    )
-    return prompt
+    return SOCIAL_MEDIA_SYSTEM_PROMPT_AGENT.replace(
+        "{{ARTICLE}}", article
+    ).replace("{{GOAL}}", goal)
 
 
 # Agent that generates topics

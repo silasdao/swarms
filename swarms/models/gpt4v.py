@@ -114,21 +114,14 @@ class GPT4Vision:
                         "role": "user",
                         "content": [
                             {"type": "text", "text": task},
-                            {
-                                "type": "image_url",
-                                "image_url": {
-                                    "url": str(img),
-                                },
-                            },
+                            {"type": "image_url", "image_url": {"url": img}},
                         ],
                     }
                 ],
                 max_tokens=self.max_tokens,
             )
 
-            out = print(response.choices[0])
-            # out = self.clean_output(out)
-            return out
+            return print(response.choices[0])
         except openai.OpenAIError as e:
             # logger.error(f"OpenAI API error: {e}")
             return f"OpenAI API error: Could not process the image. {e}"
@@ -138,9 +131,7 @@ class GPT4Vision:
     def clean_output(self, output: str):
         # Regex pattern to find the Choice object representation in the output
         pattern = r"Choice\(.*?\(content=\"(.*?)\".*?\)\)"
-        match = re.search(pattern, output, re.DOTALL)
-
-        if match:
+        if match := re.search(pattern, output, re.DOTALL):
             # Extract the content from the matched pattern
             content = match.group(1)
             # Replace escaped quotes to get the clean content
@@ -216,7 +207,7 @@ class GPT4Vision:
         return await asyncio.gather(*futures)
 
     def print_dashboard(self):
-        dashboard = print(
+        return print(
             colored(
                 f"""
             GPT4Vision Dashboard
@@ -232,7 +223,6 @@ class GPT4Vision:
                 "green",
             )
         )
-        return dashboard
 
     def health_check(self):
         """Health check for the GPT4Vision model"""
@@ -253,6 +243,4 @@ class GPT4Vision:
         Returns:
         The sanitized text.
         """
-        # Example of simple sanitization, this should be expanded based on the context and usage
-        sanitized_text = re.sub(r"[^\w\s]", "", text)
-        return sanitized_text
+        return re.sub(r"[^\w\s]", "", text)

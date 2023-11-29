@@ -27,7 +27,7 @@ class AbstractModel(ABC):
 
     def chat(self, task: str, history: str = "") -> str:
         """Chat with the model"""
-        complete_task = task + " | " + history  # Delimiter for clarity
+        complete_task = f"{task} | {history}"
         return self.run(complete_task)
 
     def __call__(self, task: str) -> str:
@@ -41,9 +41,7 @@ class AbstractModel(ABC):
     def _tokens_per_second(self) -> float:
         """Tokens per second"""
         elapsed_time = self.end_time - self.start_time
-        if elapsed_time == 0:
-            return float("inf")
-        return self._num_tokens() / elapsed_time
+        return float("inf") if elapsed_time == 0 else self._num_tokens() / elapsed_time
 
     def _num_tokens(self, text: str) -> int:
         """Number of tokens"""

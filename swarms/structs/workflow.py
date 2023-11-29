@@ -74,10 +74,11 @@ class Workflow:
 
     def __run_from_task(self, task: Optional[Task]) -> None:
         """Run from task"""
-        if task is None:
+        if (
+            task is not None
+            and isinstance(task.execute(), Exception)
+            or task is None
+        ):
             return
         else:
-            if isinstance(task.execute(), Exception):
-                return
-            else:
-                self.__run_from_task(next(iter(task.children), None))
+            self.__run_from_task(next(iter(task.children), None))

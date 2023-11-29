@@ -1,5 +1,5 @@
 def documentation(task: str):
-    documentation = f"""Create multi-page long and explicit professional pytorch-like documentation for the <MODULE> code below follow the outline for the <MODULE> library,
+    return f"""Create multi-page long and explicit professional pytorch-like documentation for the <MODULE> code below follow the outline for the <MODULE> library,
     provide many examples and teach the user about the code, provide examples for every function, make the documentation 10,000 words,
     provide many usage examples and note this is markdown docs, create the documentation for the code to document,
     put the arguments and methods in a table in markdown to make it visually seamless
@@ -98,4 +98,3 @@ def documentation(task: str):
             ############# DOCUMENT THE FOLLOWING CODE ########
             {task}
             """
-    return documentation

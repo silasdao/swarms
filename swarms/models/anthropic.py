@@ -187,8 +187,9 @@ def build_extra_kwargs(
             )
             extra_kwargs[field_name] = values.pop(field_name)
 
-    invalid_model_kwargs = all_required_field_names.intersection(extra_kwargs.keys())
-    if invalid_model_kwargs:
+    if invalid_model_kwargs := all_required_field_names.intersection(
+        extra_kwargs.keys()
+    ):
         raise ValueError(
             f"Parameters {invalid_model_kwargs} should be specified explicitly. "
             "Instead they were passed in as part of `model_kwargs` parameter."
@@ -199,9 +200,7 @@ def build_extra_kwargs(
 
 def convert_to_secret_str(value: Union[SecretStr, str]) -> SecretStr:
     """Convert a string to a SecretStr if needed."""
-    if isinstance(value, SecretStr):
-        return value
-    return SecretStr(value)
+    return value if isinstance(value, SecretStr) else SecretStr(value)
 
 
 class _AnthropicCommon(BaseLanguageModel):
@@ -404,13 +403,12 @@ class Anthropic(LLM, _AnthropicCommon):
 
         """
         if self.streaming:
-            completion = ""
-            for chunk in self._stream(
-                prompt=prompt, stop=stop, run_manager=run_manager, **kwargs
-            ):
-                completion += chunk.text
-            return completion
-
+            return "".join(
+                chunk.text
+                for chunk in self._stream(
+                    prompt=prompt, stop=stop, run_manager=run_manager, **kwargs
+                )
+            )
         stop = self._get_anthropic_stop(stop)
         params = {**self._default_params, **kwargs}
         response = self.client.completions.create(

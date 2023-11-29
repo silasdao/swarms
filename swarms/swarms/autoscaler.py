@@ -102,9 +102,7 @@ class AutoScaler:
             while True:
                 sleep(60)  # check minute
                 pending_tasks = self.task_queue.qsize()
-                active_agents = sum(
-                    [1 for agent in self.agents_pool if agent.is_busy()]
-                )
+                active_agents = sum(1 for agent in self.agents_pool if agent.is_busy())
 
                 if pending_tasks / len(self.agents_pool) > self.busy_threshold:
                     self.scale_up()
@@ -123,10 +121,8 @@ class AutoScaler:
             monitor_thread.start()
 
             while True:
-                task = self.task_queue.get()
-                if task:
-                    available_agent = next((agent for agent in self.agents_pool))
-                    if available_agent:
+                if task := self.task_queue.get():
+                    if available_agent := next(iter(self.agents_pool)):
                         available_agent.run(task)
         except Exception as error:
             print(f"Error starting: {error} try again with a new task")
@@ -169,7 +165,7 @@ class AutoScaler:
         metrics = {"completion_time": [], "success_rate": [], "error_rate": []}
         for agent in self.agents_pool:
             agent_metrics = agent.get_metrics()
-            for key in metrics.keys():
+            for key in metrics:
                 metrics[key].append(agent_metrics.get(key, 0.0))
         return metrics
 

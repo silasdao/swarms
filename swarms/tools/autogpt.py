@@ -53,8 +53,7 @@ def process_csv(
         if output_path is not None:
             instructions += f" Save output to disk at {output_path}"
         try:
-            result = agent.run(instructions)
-            return result
+            return agent.run(instructions)
         except Exception as e:
             return f"Error: {e}"
 

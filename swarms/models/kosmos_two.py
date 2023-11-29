@@ -13,7 +13,7 @@ from transformers import AutoModelForVision2Seq, AutoProcessor
 def is_overlapping(rect1, rect2):
     x1, y1, x2, y2 = rect1
     x3, y3, x4, y4 = rect2
-    return not (x2 < x3 or x1 > x4 or y2 < y3 or y1 > y4)
+    return x2 >= x3 and x1 <= x4 and y2 >= y3 and y1 <= y4
 
 
 class Kosmos:
@@ -124,27 +124,26 @@ class Kosmos:
         prompt = "<grounding> Describe this image in detail"
         self.run(prompt, image_url)
 
-    def draw_entity_boxes_on_image(image, entities, show=False, save_path=None):
+    def draw_entity_boxes_on_image(self, entities, show=False, save_path=None):
         """_summary_
         Args:
             image (_type_): image or image path
             collect_entity_location (_type_): _description_
         """
-        if isinstance(image, Image.Image):
-            image_h = image.height
-            image_w = image.width
-            image = np.array(image)[:, :, [2, 1, 0]]
-        elif isinstance(image, str):
-            if os.path.exists(image):
-                pil_img = Image.open(image).convert("RGB")
-                image = np.array(pil_img)[:, :, [2, 1, 0]]
-                image_h = pil_img.height
-                image_w = pil_img.width
-            else:
-                raise ValueError(f"invaild image path, {image}")
-        elif isinstance(image, torch.Tensor):
+        if isinstance(self, Image.Image):
+            image_h = self.height
+            image_w = self.width
+            self = np.array(self)[:, :, [2, 1, 0]]
+        elif isinstance(self, str):
+            if not os.path.exists(self):
+                raise ValueError(f"invaild image path, {self}")
+            pil_img = Image.open(self).convert("RGB")
+            self = np.array(pil_img)[:, :, [2, 1, 0]]
+            image_h = pil_img.height
+            image_w = pil_img.width
+        elif isinstance(self, torch.Tensor):
             # pdb.set_trace()
-            image_tensor = image.cpu()
+            image_tensor = self.cpu()
             reverse_norm_mean = torch.tensor([0.48145466, 0.4578275, 0.40821073])[
                 :, None, None
             ]
@@ -155,14 +154,14 @@ class Kosmos:
             pil_img = T.ToPILImage()(image_tensor)
             image_h = pil_img.height
             image_w = pil_img.width
-            image = np.array(pil_img)[:, :, [2, 1, 0]]
+            self = np.array(pil_img)[:, :, [2, 1, 0]]
         else:
-            raise ValueError(f"invaild image format, {type(image)} for {image}")
+            raise ValueError(f"invaild image format, {type(self)} for {self}")
 
         if len(entities) == 0:
-            return image
+            return self
 
-        new_image = image.copy()
+        new_image = self.copy()
         previous_bboxes = []
         # size of text
         text_size = 1
@@ -176,6 +175,7 @@ class Kosmos:
         text_offset_original = text_height - base_height
         text_spaces = 3
 
+        alpha = 0.5
         for entity_name, (start, end), bboxes in entities:
             for x1_norm, y1_norm, x2_norm, y2_norm in bboxes:
                 orig_x1, orig_y1, orig_x2, orig_y2 = (
@@ -244,16 +244,10 @@ class Kosmos:
                             y1 = image_h
                             break
 
-                alpha = 0.5
                 for i in range(text_bg_y1, text_bg_y2):
                     for j in range(text_bg_x1, text_bg_x2):
                         if i < image_h and j < image_w:
-                            if j < text_bg_x1 + 1.35 * c_width:
-                                # original color
-                                bg_color = color
-                            else:
-                                # white
-                                bg_color = [255, 255, 255]
+                            bg_color = color if j < text_bg_x1 + 1.35 * c_width else [255, 255, 255]
                             new_image[i, j] = (
                                 alpha * new_image[i, j]
                                 + (1 - alpha) * np.array(bg_color)

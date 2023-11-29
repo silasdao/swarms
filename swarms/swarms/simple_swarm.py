@@ -55,8 +55,7 @@ class SimpleSwarm:
     def _process_task(self, task):
         # TODO, Implement load balancing, fallback mechanism
         for worker in self.agents:
-            response = worker.run(task)
-            if response:
+            if response := worker.run(task):
                 return response
         return "All Agents failed"
 

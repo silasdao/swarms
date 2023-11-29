@@ -112,8 +112,7 @@ class BiddingDialogueAgent(DialogueAgent):
             message_history="\n".join(self.message_history),
             recent_message=self.message_history[-1],
         )
-        bid_string = self.model([SystemMessage(content=prompt)]).content
-        return bid_string
+        return self.model([SystemMessage(content=prompt)]).content
 
 
 character_names = ["Donald Trump", "Kanye West", "Elizabeth Warren"]
@@ -138,10 +137,7 @@ def generate_character_description(character_name):
             Do not add anything else."""
         ),
     ]
-    character_description = ChatOpenAI(temperature=1.0)(
-        character_specifier_prompt
-    ).content
-    return character_description
+    return ChatOpenAI(temperature=1.0)(character_specifier_prompt).content
 
 
 def generate_character_header(character_name, character_description):
@@ -216,7 +212,7 @@ bid_parser = BidOutputParser(
 
 
 def generate_character_bidding_template(character_header):
-    bidding_template = f"""{character_header}
+    return f"""{character_header}
 
 
     {{message_history}}
@@ -231,7 +227,6 @@ def generate_character_bidding_template(character_header):
     {bid_parser.get_format_instructions()}
     Do nothing else.
     """
-    return bidding_template
 
 
 character_bidding_templates = [
@@ -305,30 +300,25 @@ def select_next_speaker(step: int, agents: List[DialogueAgent]) -> int:
     return idx
 
 
-characters = []
-for character_name, character_system_message, bidding_template in zip(
-    character_names, character_system_messages, character_bidding_templates
-):
-    characters.append(
-        BiddingDialogueAgent(
-            name=character_name,
-            system_message=character_system_message,
-            model=ChatOpenAI(temperature=0.2),
-            bidding_template=bidding_template,
-        )
+characters = [
+    BiddingDialogueAgent(
+        name=character_name,
+        system_message=character_system_message,
+        model=ChatOpenAI(temperature=0.2),
+        bidding_template=bidding_template,
     )
-
+    for character_name, character_system_message, bidding_template in zip(
+        character_names, character_system_messages, character_bidding_templates
+    )
+]
 max_iters = 10
-n = 0
-
 simulator = DialogueSimulator(agents=characters, selection_function=select_next_speaker)
 simulator.reset()
 simulator.inject("Debate Moderator", specified_topic)
 print(f"(Debate Moderator): {specified_topic}")
 print("\n")
 
-while n < max_iters:
+for _ in range(max_iters):
     name, message = simulator.step()
     print(f"({name}): {message}")
     print("\n")
-    n += 1

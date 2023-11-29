@@ -126,12 +126,7 @@ class BioClip:
             logits = logits.cpu().numpy()
             sorted_indices = sorted_indices.cpu().numpy()
 
-        results = {}
-        for idx in sorted_indices[0]:
-            label = labels[idx]
-            prob = logits[0][idx]
-            results[label] = prob
-        return results
+        return {labels[idx]: logits[0][idx] for idx in sorted_indices[0]}
 
     @staticmethod
     def plot_image_with_metadata(img_path: str, metadata: dict):

@@ -65,14 +65,4 @@ class PromptGenerator:
             str: The generated prompt string.
         """
         formatted_response_format = json.dumps(self.response_format, indent=4)
-        prompt_string = (
-            f"Constraints:\n{''.join(self.constraints)}\n\n"
-            f"Commands:\n{''.join(self.commands)}\n\n"
-            f"Resources:\n{''.join(self.resources)}\n\n"
-            f"Performance Evaluation:\n{''.join(self.performance_evaluation)}\n\n"
-            "You should only respond in JSON format as described below "
-            f"\nResponse Format: \n{formatted_response_format} "
-            "\nEnsure the response can be parsed by Python json.loads"
-        )
-
-        return prompt_string
+        return f"Constraints:\n{''.join(self.constraints)}\n\nCommands:\n{''.join(self.commands)}\n\nResources:\n{''.join(self.resources)}\n\nPerformance Evaluation:\n{''.join(self.performance_evaluation)}\n\nYou should only respond in JSON format as described below \nResponse Format: \n{formatted_response_format} \nEnsure the response can be parsed by Python json.loads"
